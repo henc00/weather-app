@@ -1,0 +1,218 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="description"
+    content="A modern responsive weather dashboard with current conditions and a 5-day forecast."
+>
+
+<title>SkyCast Weather</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<link rel="stylesheet" href="style.css">
+
+</head> <body>
+
+<div class="app">
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">☁️</div>
+
+            <div>
+                <h1>SkyCast</h1>
+                <span>Weather dashboard</span>
+            </div>
+        </div>
+
+        <button
+            id="locationButton"
+            class="location-button"
+            type="button"
+            title="Use my current location"
+        >
+            <span>⌖</span>
+            <span>My Location</span>
+        </button>
+    </header>
+
+    <main>
+
+        <section class="search-section">
+            <form id="searchForm" class="search-form">
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        id="cityInput"
+                        type="search"
+                        placeholder="Search for a city..."
+                        autocomplete="off"
+                        aria-label="Search for a city"
+                    >
+
+                    <button type="submit" aria-label="Search">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+            <p id="statusMessage" class="status-message" aria-live="polite"></p>
+        </section>
+
+        <section id="weatherContent" class="weather-content">
+
+            <!-- Current weather -->
+            <div class="current-weather-card">
+
+                <div class="current-main">
+
+                    <div class="location-info">
+                        <div class="location-title">
+                            <span class="pin">●</span>
+                            <h2 id="locationName">Your Location</h2>
+                        </div>
+
+                        <p id="currentDate">Loading date...</p>
+                    </div>
+
+                    <div class="temperature-area">
+                        <div id="weatherIcon" class="weather-icon">☀️</div>
+
+                        <div>
+                            <div class="temperature">
+                                <span id="currentTemperature">--</span>
+                                <span class="degree">°C</span>
+                            </div>
+
+                            <div id="weatherDescription" class="weather-description">
+                                Loading weather...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feels-like">
+                        Feels like <strong id="feelsLike">--°C</strong>
+                    </div>
+
+                </div>
+
+                <div class="weather-details">
+
+                    <div class="detail-item">
+                        <div class="detail-icon humidity-icon">💧</div>
+
+                        <div>
+                            <span class="detail-label">Humidity</span>
+                            <strong id="humidity">--%</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-icon wind-icon">💨</div>
+
+                        <div>
+                            <span class="detail-label">Wind Speed</span>
+                            <strong id="windSpeed">-- km/h</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-icon rain-icon">🌧️</div>
+
+                        <div>
+                            <span class="detail-label">Precipitation</span>
+                            <strong id="precipitation">-- mm</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-icon direction-icon">🧭</div>
+
+                        <div>
+                            <span class="detail-label">Wind Direction</span>
+                            <strong id="windDirection">--</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Forecast -->
+            <section class="forecast-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>5-Day Forecast</h2>
+                        <p>Weather outlook for the next five days</p>
+                    </div>
+                </div>
+
+                <div id="forecastGrid" class="forecast-grid">
+
+                    <div class="forecast-card skeleton">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line small"></div>
+                    </div>
+
+                    <div class="forecast-card skeleton">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line small"></div>
+                    </div>
+
+                    <div class="forecast-card skeleton">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line small"></div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+        <!-- Error state -->
+        <section id="errorState" class="error-state hidden">
+            <div class="error-icon">⚠️</div>
+
+            <h2>Something went wrong</h2>
+
+            <p id="errorMessage">
+                We couldn't load the weather data.
+            </p>
+
+            <button id="retryButton" type="button">
+                Try Again
+            </button>
+        </section>
+
+    </main>
+
+    <footer>
+        <span>Weather data by Open-Meteo</span>
+        <span>•</span>
+        <span>Built with HTML, CSS & JavaScript</span>
+    </footer>
+
+</div>
+
+<div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loader"></div>
+    <p>Getting weather data...</p>
+</div>
+
+<script src="script.js"></script>
+
+</body> </html>
