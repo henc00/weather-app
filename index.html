@@ -44,23 +44,31 @@
     <main>
 
         <section class="search-section">
-            <form id="searchForm" class="search-form">
-                <div class="search-box">
-                    <span class="search-icon">⌕</span>
+           <form id="searchForm" class="search-form">
+    <div class="search-box">
+        <span class="search-icon">⌕</span>
 
-                    <input
-                        id="cityInput"
-                        type="search"
-                        placeholder="Search for a city..."
-                        autocomplete="off"
-                        aria-label="Search for a city"
-                    >
+        <input
+            id="cityInput"
+            type="search"
+            placeholder="Search for a city..."
+            autocomplete="off"
+            aria-label="Search for a city"
+        >
 
-                    <button type="submit" aria-label="Search">
-                        Search
-                    </button>
-                </div>
-            </form>
+        <button type="submit" aria-label="Search">
+            Search
+        </button>
+    </div>
+</form>
+
+<div
+    id="citySuggestions"
+    class="city-suggestions hidden"
+    role="listbox"
+    aria-label="City suggestions"
+></div>
+
 
             <p id="statusMessage" class="status-message" aria-live="polite"></p>
         </section>

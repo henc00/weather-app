@@ -8,6 +8,11 @@ const searchForm = document.getElementById("searchForm");
 const cityInput = document.getElementById("cityInput");
 const locationButton = document.getElementById("locationButton");
 const statusMessage = document.getElementById("statusMessage");
+const citySuggestions =
+    document.getElementById("citySuggestions");
+
+let suggestionTimer = null;
+let suggestionController = null;
 
 const weatherContent = document.getElementById("weatherContent");
 const errorState = document.getElementById("errorState");
@@ -152,6 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
+    cityInput.addEventListener(
+        "input",
+        handleCityInput
+    );
+
     searchForm.addEventListener("submit", handleSearch);
     locationButton.addEventListener("click", requestUserLocation);
     retryButton.addEventListener("click", retryLastRequest);
@@ -337,6 +347,171 @@ async function reverseGeocode(latitude, longitude) {
         city,
         country
     };
+}
+
+function handleCityInput() {
+    const query = cityInput.value.trim();
+
+    clearTimeout(suggestionTimer);
+
+    if (suggestionController) {
+        suggestionController.abort();
+        suggestionController = null;
+    }
+
+    if (query.length < 2) {
+        hideSuggestions();
+        return;
+    }
+
+    suggestionTimer = setTimeout(
+        () => fetchCitySuggestions(query),
+        250
+    );
+}
+
+async function fetchCitySuggestions(query) {
+    suggestionController =
+        new AbortController();
+
+    try {
+        const url = new URL(GEOCODING_API);
+
+        url.searchParams.set(
+            "name",
+            query
+        );
+
+        url.searchParams.set(
+            "count",
+            "6"
+        );
+
+        url.searchParams.set(
+            "language",
+            "en"
+        );
+
+        url.searchParams.set(
+            "format",
+            "json"
+        );
+
+        const response = await fetch(
+            url.toString(),
+            {
+                signal:
+                    suggestionController.signal
+            }
+        );
+
+        if (!response.ok) {
+            hideSuggestions();
+            return;
+        }
+
+        const data = await response.json();
+
+        if (
+            !data.results ||
+            data.results.length === 0
+        ) {
+            hideSuggestions();
+            return;
+        }
+
+        renderCitySuggestions(
+            data.results
+        );
+    } catch (error) {
+        if (error.name !== "AbortError") {
+            console.warn(
+                "City suggestions failed:",
+                error
+            );
+
+            hideSuggestions();
+        }
+    }
+}
+
+function renderCitySuggestions(results) {
+    citySuggestions.innerHTML = "";
+
+    results.forEach((location) => {
+        const suggestion =
+            document.createElement("button");
+
+        suggestion.type = "button";
+        suggestion.className =
+            "city-suggestion";
+        suggestion.setAttribute(
+            "role",
+            "option"
+        );
+
+        const locationParts = [
+            location.admin1,
+            location.country
+        ].filter(Boolean);
+
+        suggestion.innerHTML = `
+            <span class="city-suggestion-name">
+                ${escapeHTML(location.name)}
+            </span>
+
+            <span class="city-suggestion-location">
+                ${escapeHTML(
+                    locationParts.join(", ")
+                )}
+            </span>
+        `;
+
+        suggestion.addEventListener(
+            "click",
+            () => selectCitySuggestion(location)
+        );
+
+        citySuggestions.appendChild(
+            suggestion
+        );
+    });
+
+    citySuggestions.classList.remove(
+        "hidden"
+    );
+}
+
+async function selectCitySuggestion(location) {
+    cityInput.value = location.name;
+
+    hideSuggestions();
+
+    try {
+        showLoading(true);
+        hideError();
+
+        setStatus(
+            `Loading weather for ${location.name}...`
+        );
+
+        await loadWeatherForCoordinates(
+            location.latitude,
+            location.longitude,
+            location.name,
+            location.country
+        );
+    } finally {
+        showLoading(false);
+    }
+}
+
+function hideSuggestions() {
+    citySuggestions.classList.add(
+        "hidden"
+    );
+
+    citySuggestions.innerHTML = "";
 }
 
 async function handleSearch(event) {
